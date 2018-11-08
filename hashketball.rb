@@ -93,29 +93,63 @@ def player_stats(name)
 end 
 
 def big_shoe_rebounds
-  a = []
-  out = nil
-  game_hash.each do |key,val|
-    val.each do |k,v|
-      if v == val[:players]
-        v.each do |attr, value|
-          a.push(value[:shoe])
-        end
-      end
-    end
-  end
-
-  out = a.max
-  game_hash.each do |key, val|
-    val.each do |k,v|
-      if v == val[:players]
-        v.each do |attr, value|
-          if value[:shoe] == out
-            out = value[:rebounds]
-          end
-        end
+  shoe = 0
+  out = 0
+  game_hash.each do |location, data|
+    data[:players].each do |k,v|
+      if v[:shoe] > shoe
+        big_shoe = v[:shoe]
+        out = v[:rebounds]
       end
     end
   end
   out
+end
+
+def most_points_scored
+  points = 0
+  game_hash.each do |location, data|
+    data[:players].each do |k,v|
+      if v[:points] > points
+        points = v[:points]
+      end
+    end
+  end
+  puts points
+end
+
+def winning_team
+  home = 0
+  away = 0
+  game_hash.each do |location, data|
+    data[:players].each do |name, stats|
+        stats.each do |k,v|
+          if location == :home && k == :points
+            home += v
+          elsif location == :away && k == :points
+            away += v
+          end
+        end
+      end
+    end
+    return home > away ? home : away
+  end
+  
+  def player_with_longest_name
+    name_length = 0
+    name = nil
+
+    game_hash.each do |location, data|
+      data[:players].each do |player, stats|
+        if player.length > name_length
+          name_length = player.length
+          name = player
+        end
+      end
+    end
+    puts name
+  end
+
+
+def long_name_steals_a_ton?
 end
